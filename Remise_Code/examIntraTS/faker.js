@@ -1,0 +1,67 @@
+"use strict";
+exports.__esModule = true;
+var personne_1 = require("./personne");
+var department_1 = require("./department");
+var enseignant_1 = require("./enseignant");
+var etudiant_1 = require("./etudiant");
+var classe_1 = require("./classe");
+var cours_1 = require("./cours");
+var note_1 = require("./note");
+var enseignantCours_1 = require("./enseignantCours");
+var faker = require('faker');
+var fs = require('fs');
+var MAX_INSTANCE = 3;
+function generateRandomJsonFile() {
+    var tab = new Array();
+    for (var index = 0; index < MAX_INSTANCE; index++) {
+        var department = new department_1.Department();
+        var personne = new personne_1.Personne();
+        var enseignant = new enseignant_1.Enseignant();
+        var etudiant = new etudiant_1.Etudiant();
+        var classe = new classe_1.Classe();
+        var cours = new cours_1.Cours();
+        var note = new note_1.Note();
+        var enseignantCours = void 0;
+        department.code = faker.random.number();
+        department.nom = faker.company.companyName();
+        department.enseignant = undefined;
+        tab.push(department);
+        personne.nom = faker.name.lastName();
+        personne.prenom = faker.name.firstName();
+        personne.telephone = faker.phone.phoneNumber();
+        personne.email = faker.internet.email();
+        tab.push(personne);
+        classe.numClasse = faker.random.alphaNumeric();
+        classe.capacite = faker.random.number();
+        classe.cours = faker.name.jobTitle();
+        tab.push(classe);
+        etudiant.nom = faker.name.lastName();
+        etudiant.prenom = faker.name.firstName();
+        etudiant.telephone = faker.phone.phoneNumber();
+        etudiant.email = faker.internet.email();
+        etudiant.techniques = faker.name.jobTitle();
+        tab.push(etudiant);
+        enseignant.nom = faker.name.lastName();
+        enseignant.prenom = faker.name.firstName();
+        enseignant.telephone = faker.phone.phoneNumber();
+        enseignant.email = faker.internet.email();
+        enseignant.diplome = faker.name.jobTitle();
+        enseignant.indice = faker.random.number();
+        tab.push(enseignant);
+        note.valeur = faker.random.number();
+        note.cours = faker.random.number();
+        // Array TO-DO
+        tab.push(note);
+        cours.numCours = faker.random.number();
+        cours.titreCours = faker.name.jobTitle();
+        tab.push(cours);
+        enseignantCours = new enseignantCours_1.EnseignantCours(enseignant, cours);
+        enseignantCours.id = index;
+        enseignantCours.diplome = enseignant.diplome + index;
+        enseignantCours.numCours = cours.numCours;
+        tab.push(enseignantCours);
+    }
+    return { "restExamIntraObject": tab };
+}
+var webService = generateRandomJsonFile();
+fs.writeFileSync("../database/examIntra.json", JSON.stringify(webService, null, '\t'));
